@@ -1,0 +1,40 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Get short commit sha
+        id: sha
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Substitute version
+        run: sed -i 's/__version__/${{ steps.sha.outputs.sha_short }}/' vyaml.py
+
+      - name: Build
+        run: pyinstaller -F vyaml.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyaml-${{ steps.sha.outputs.sha_short }}
+          path: dist/*

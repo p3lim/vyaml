@@ -1,0 +1,33 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pyinstaller
+
+      - name: Substitute version
+        run: sed -i 's/__version__/${{ github.ref_name }}/' vyaml.py
+
+      - name: Build
+        run: pyinstaller -F vyaml.py
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v1 # this version is not correct in their docs
+        with:
+          files: dist/vyaml
+          generate_release_notes: true
