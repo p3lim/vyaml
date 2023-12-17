@@ -106,7 +106,7 @@ class VYaml:
 
         print(self.execute_vbash(lines))
 
-    def import_cmd(self) -> None:
+    def import_cmd(self, _args: argparse.Namespace) -> None:
         # grab running config
         vc = Config()
         config = vc.get_config_dict().copy()  # need to copy it to avoid metadata
