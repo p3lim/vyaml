@@ -35,6 +35,9 @@ Secrets generated with `vyaml encrypt` are encrypted with [AES-256-GCM](https://
 ```yaml
 system:
   host-name: vyos
+  name-server:
+  	- 1.1.1.1
+  	- 1.0.0.1
 
   login:
     user:
@@ -73,6 +76,8 @@ The above configuration becomes:
 
 ```bash
 set system host-name vyos
+set system name-server 1.1.1.1
+set system name-server 1.0.0.1
 set system login user vyos authentication plaintext-password supersecret
 set interface ethernet eth0 address dhcp
 set service ssh port 22
