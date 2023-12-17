@@ -40,7 +40,7 @@ system:
     - 1.0.0.1
 
   login:
-    user:
+    !env USER:
       vyos:
         authentication:
           plaintext-password: !secret |
