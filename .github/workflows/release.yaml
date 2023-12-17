@@ -27,7 +27,7 @@ jobs:
         run: sed -i 's/__version__/${{ github.ref_name }}/' vyaml.py
 
       - name: Build
-        run: pyinstaller -F vyaml.py
+        run: pyinstaller -F vyaml.py --hidden-import json
 
       - name: Upload release
         uses: softprops/action-gh-release@v1 # this version is not correct in their docs

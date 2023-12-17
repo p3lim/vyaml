@@ -30,7 +30,7 @@ jobs:
         run: sed -i 's/__version__/${{ steps.sha.outputs.sha_short }}/' vyaml.py
 
       - name: Build
-        run: pyinstaller -F vyaml.py
+        run: pyinstaller -F vyaml.py --hidden-import json
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
