@@ -36,8 +36,8 @@ Secrets generated with `vyaml encrypt` are encrypted with [AES-256-GCM](https://
 system:
   host-name: vyos
   name-server:
-  	- 1.1.1.1
-  	- 1.0.0.1
+    - 1.1.1.1
+    - 1.0.0.1
 
   login:
     user:
