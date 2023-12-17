@@ -10,6 +10,8 @@ import textwrap
 from binascii import hexlify, unhexlify
 from typing import Any
 
+from vyos.config import Config
+
 import yaml
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import scrypt
@@ -40,6 +42,9 @@ class VYaml:
         apply_cmd.set_defaults(func=self.apply_cmd)
         apply_cmd.add_argument('-k', '--key', type=argparse.FileType('r'), metavar='PATH', help='path to encryption key')
         apply_cmd.add_argument('-c', '--config', type=argparse.FileType('r'), metavar='PATH', help='path to config file', required=True)
+
+        import_cmd = commands.add_parser('import', description='Converts running config to YAML.')
+        import_cmd.set_defaults(func=self.import_cmd)
 
         args = parser.parse_args(sys.argv[1:])
         args.func(args)
@@ -100,6 +105,14 @@ class VYaml:
             lines.append(f'run restart container {container}')
 
         print(self.execute_vbash(lines))
+
+    def import_cmd(self) -> None:
+        # grab running config
+        vc = Config()
+        config = vc.get_config_dict().copy()  # need to copy it to avoid metadata
+
+        # output the config as yaml
+        print(yaml.safe_dump(config))
 
     def load_key(self, key_file: io.TextIOWrapper) -> None:
         if key_file and len(key := key_file.readline().strip()) > 0:

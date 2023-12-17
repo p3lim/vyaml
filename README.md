@@ -19,6 +19,8 @@ The YAML configuration can be enhanced with [custom tags](#tags), and applied di
 
 `vyaml encrypt` will read input on stdin and encrypt it so it can be added as a secret to the configuration.
 
+`vyaml import` will convert the running config to YAML and output it to stdout.
+
 ### Tags
 
 Additional [YAML tags](https://github.com/yaml/yaml-spec/blob/main/spec/1.2.2/spec.md#-tags) supported:
