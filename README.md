@@ -119,4 +119,10 @@ Releases are available here on GitHub, packaged into one executable without any 
 
 <https://github.com/p3lim/vyaml/releases>
 
-Simply plop it somewhere in `/config` (so it survives reboots/upgrades) and make it executable.
+Add this to `/config/scripts/` (so it survives reboots/upgrades) and make it executable.  
+To add it to the path, run the following command:
+
+```bash
+echo 'sudo ln -s /config/scripts/vyaml /usr/local/bin/vyaml' | sudo tee -a /config/scripts/vyos-postconfig-bootup.script
+sh /config/scripts/vyos-postconfig-bootup.script
+```
