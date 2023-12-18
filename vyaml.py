@@ -129,6 +129,8 @@ class VYaml:
             config = yaml.safe_load(config_file)
         except yaml.scanner.ScannerError as e:
             self.error(str(e))
+        except yaml.composer.ComposerError as e:
+            self.error(str(e))
         except UnicodeDecodeError:
             self.error('config file is not a text file')
         return config
