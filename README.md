@@ -25,8 +25,25 @@ The YAML configuration can be enhanced with [custom tags](#tags), and applied di
 
 Additional [YAML tags](https://github.com/yaml/yaml-spec/blob/main/spec/1.2.2/spec.md#-tags) supported:
 
-- `!env` will replace the value with an environment variable (e.g. `!env SHELL` becomes `/bin/vbash`)
+- `!env` will replace the value with an environment variable
+    ```yaml
+    user: !env USER
+    ```
+    is equivalent to:
+    ```yaml
+    user: vyos
+    ```
 - `!secret` will replace the value with an [encrypted secret](#secrets)
+    ```yaml
+    plaintext-password: !secret |
+      656a34220330e6659cc40b0a0dafcb9cf04efcda530c170722da9b8a318c7584
+      a9811da7eda054a845c8f2e1410a0dcf034f6ad37207e0da1a819d31d6ef650a
+      0da3cf0186e35f688db1548038695c5e6f
+    ```
+    is equivalent to:
+    ```yaml
+    plaintext-password: supersecret
+    ```
 
 ### Secrets
 
