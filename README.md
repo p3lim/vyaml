@@ -77,7 +77,7 @@ system:
 
   login:
     user:
-      !env USER:
+      vyos:
         authentication:
           plaintext-password: !secret |
             656a34220330e6659cc40b0a0dafcb9cf04efcda530c170722da9b8a318c7584
