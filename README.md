@@ -3,6 +3,10 @@
 A commandline toolkit for configuring [VyOS](https://vyos.io) devices in [YAML](https://yaml.org).  
 The YAML configuration can be enhanced with [custom tags](#tags), and applied directly.
 
+> [!CAUTION]
+> This project is very much in its infancy and should be used with caution!
+> Take backups of your configuration, preferably test it out on a non-production device first.
+
 ### Commands
 
 `vyaml apply` applies a configuration in the following fashion:
