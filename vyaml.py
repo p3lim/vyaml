@@ -123,7 +123,13 @@ class VYaml:
     def load_config(self, config_file: io.TextIOWrapper) -> Any:
         yaml.SafeLoader.add_constructor('!secret', self.secret_tag_constructor)
         yaml.SafeLoader.add_constructor('!env', self.env_tag_constructor)
-        return yaml.safe_load(config_file)
+        yaml.SafeLoader.add_constructor('!include', self.include_tag_constructor)
+
+        try:
+            config = yaml.safe_load(config_file)
+        except yaml.scanner.ScannerError as e:
+            self.error(str(e))
+        return config
 
     def secret_tag_constructor(self, _loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
         try:
