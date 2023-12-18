@@ -135,7 +135,7 @@ class VYaml:
         try:
             return self.decrypt(node.value.replace('\n', '').strip(), self.key)
         except AttributeError:
-            self.error('unable to decrypt; missing encryption key')
+            self.error(f'unable to decrypt; missing encryption key\n{node.start_mark}')
         return ''  # too harsh type checks
 
     def env_tag_constructor(self, _loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
