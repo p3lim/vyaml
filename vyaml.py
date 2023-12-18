@@ -126,12 +126,8 @@ class VYaml:
         yaml.SafeLoader.add_constructor('!include', self.include_tag_constructor)
 
         try:
-            config = yaml.safe_load(config_file)
-        except yaml.scanner.ScannerError as e:
-            self.error(str(e))
-        except yaml.composer.ComposerError as e:
-            self.error(str(e))
-        except yaml.parser.ParserError as e:
+            config = yaml.load(config_file, Loader=YamlLoader)
+        except yaml.YAMLError as e:
             self.error(str(e))
         except UnicodeDecodeError:
             self.error('config file is not a text file')
