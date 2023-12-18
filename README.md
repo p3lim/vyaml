@@ -32,7 +32,7 @@ Additional [YAML tags](https://github.com/yaml/yaml-spec/blob/main/spec/1.2.2/sp
 
 Secrets generated with `vyaml encrypt` are encrypted with [AES-256-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode), with a key derivated with [scrypt](https://en.wikipedia.org/wiki/Scrypt) for added entropy, and should be safe to commit to Git.
 
-To use secrets in a configuration, or to encrypt data, a key file must be supplied using the `-k`/`--key` argument.  
+To use secrets in a configuration, or to encrypt data, a key file must be supplied using the `-k`/`--key` argument.
 Following best practices, the key should be of sufficient length.
 
 ### Examples
