@@ -169,9 +169,13 @@ class VYaml:
     def flatten_config_obj(self, lines: list[str], obj: Any = '', prefix: str = '') -> None:
         if isinstance(obj, dict) and obj:
             for key in obj:
+                if key.startswith('.'):
+                    continue
                 self.flatten_config_obj(lines, obj[key], prefix + str(key) + ' ')
         elif isinstance(obj, list) and obj:
             for key in obj:
+                if key.startswith('.'):
+                    continue
                 self.flatten_config_obj(lines, key, prefix)
         elif not prefix.startswith('.'):
             if obj:
