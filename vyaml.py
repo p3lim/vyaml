@@ -165,7 +165,6 @@ class VYaml:
     def flatten_config_obj(self, lines: list[str], obj: Any = '', prefix: str = '') -> None:
         if isinstance(obj, dict) and obj:
             for key in obj:
-                # print('obj', obj, key, obj[key], prefix)
                 self.flatten_config_obj(lines, obj[key], prefix + str(key) + ' ')
         elif isinstance(obj, list) and obj:
             for key in obj:
