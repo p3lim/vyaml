@@ -149,13 +149,18 @@ container name nginx port http destination: 80
 
 ## Installation
 
-Releases are available here on GitHub, packaged into one executable without any external Python dependencies.
+Releases are available here on GitHub, packaged into one executable.  
+Most dependencies are included in this file, with the exception of [VyOS Python bindings](https://github.com/vyos/vyos-1x/tree/sagitta/python).
 
 <https://github.com/p3lim/vyaml/releases>
 
-Add this to `/config/scripts/` (so it survives reboots/upgrades) and make it executable.  
-To add it to the path, run the following command:
+Add this to `/config/scripts/` (so it survives reboots/upgrades) and make it executable:
+```bash
+curl -sSLo /config/scripts/vyaml https://github.com/p3lim/vyaml/releases/latest/download/vyaml
+chmod u+x /config/scripts/vyaml
+```
 
+To add it to the path, run the following command:
 ```bash
 echo 'sudo ln -sf /config/scripts/vyaml /usr/local/bin/vyaml' | sudo tee -a /config/scripts/vyos-postconfig-bootup.script
 sh /config/scripts/vyos-postconfig-bootup.script
