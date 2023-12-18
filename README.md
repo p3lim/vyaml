@@ -70,6 +70,25 @@ Secrets generated with `vyaml encrypt` are encrypted with [AES-256-GCM](https://
 To use secrets in a configuration, or to encrypt data, a key file must be supplied using the `-k`/`--key` argument.
 Following best practices, the key should be of sufficient length.
 
+## Anchors
+
+If you want to use YAML anchors and aliases but not render the anchor "template" block, prefix it with a `.`, e.g:
+
+```yaml
+.container-base: &container
+  memory: '0'
+container:
+  name:
+    nginx:
+      <<: *container
+      image: nginx:latest
+```
+will become:
+```bash
+set container name nginx memory '0'
+set container name nginx image 'nginx:latest'
+```
+
 ### Examples
 
 ```yaml

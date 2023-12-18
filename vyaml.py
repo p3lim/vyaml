@@ -169,10 +169,11 @@ class VYaml:
         elif isinstance(obj, list) and obj:
             for key in obj:
                 self.flatten_config_obj(lines, key, prefix)
-        elif obj:
-            lines.append(f"set {prefix[:-1]} '{str(obj)}'")
-        else:
-            lines.append(f"set {prefix[:-1]}")
+        elif not prefix.startswith('.'):
+            if obj:
+                lines.append(f"set {prefix[:-1]} '{str(obj)}'")
+            else:
+                lines.append(f"set {prefix[:-1]}")
 
     def encrypt(self, plaintext: str, passphrase: str) -> str:
         salt = get_random_bytes(32)
