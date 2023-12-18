@@ -8,7 +8,7 @@ import subprocess
 import sys
 import textwrap
 from binascii import hexlify, unhexlify
-from typing import Any
+from typing import Any, no_type_check
 
 import yaml
 from Crypto.Cipher import AES
@@ -20,6 +20,16 @@ sys.path.append('/usr/lib/python3/dist-packages')
 from vyos.config import Config
 
 IMAGE_LINE_RE = re.compile(r'^set container name (.*) image (.*)$')
+
+
+class YamlLoader(yaml.SafeLoader):
+    @no_type_check
+    def compose_document(self):
+        # copy of yaml.Composer.compose_document except we don't instanciate the anchors dict
+        self.get_event()
+        node = self.compose_node(None, None)
+        self.get_event()
+        return node
 
 
 class VYaml:
@@ -121,29 +131,40 @@ class VYaml:
             self.key = key
 
     def load_config(self, config_file: io.TextIOWrapper) -> Any:
-        yaml.SafeLoader.add_constructor('!secret', self.secret_tag_constructor)
-        yaml.SafeLoader.add_constructor('!env', self.env_tag_constructor)
-        yaml.SafeLoader.add_constructor('!include', self.include_tag_constructor)
+        # load custom tags
+        YamlLoader.add_constructor('!secret', self.secret_tag_constructor)
+        YamlLoader.add_constructor('!env', self.env_tag_constructor)
+        YamlLoader.add_constructor('!include', self.include_tag_constructor)
 
         try:
-            config = yaml.load(config_file, Loader=YamlLoader)
+            config = self.load_yaml(config_file)
         except yaml.YAMLError as e:
             self.error(str(e))
         except UnicodeDecodeError:
             self.error('config file is not a text file')
         return config
 
-    def secret_tag_constructor(self, _loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
+    def load_yaml(self, stream: Any, root_loader: YamlLoader | None = None) -> Any:
+        loader = YamlLoader(stream)
+        if root_loader is not None:
+            loader.anchors = root_loader.anchors
+
+        try:
+            return loader.get_single_data()
+        finally:
+            loader.dispose()  # type: ignore
+
+    def secret_tag_constructor(self, _loader: YamlLoader, node: yaml.nodes.ScalarNode) -> str:
         try:
             return self.decrypt(node.value.replace('\n', '').strip(), self.key)
         except AttributeError:
             self.error(f'unable to decrypt; missing encryption key\n{node.start_mark}')
         return ''  # too harsh type checks
 
-    def env_tag_constructor(self, _loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
+    def env_tag_constructor(self, _loader: YamlLoader, node: yaml.nodes.ScalarNode) -> str:
         return os.environ.get(node.value) or ''
 
-    def include_tag_constructor(self, loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> Any:
+    def include_tag_constructor(self, loader: YamlLoader, node: yaml.nodes.ScalarNode) -> Any:
         if node.value.startswith(os.sep):  # absolute path
             path = node.value
         else:  # relative path
@@ -155,7 +176,7 @@ class VYaml:
             self.error(f'permission denied when reading file "{path}"\n{node.start_mark}')
 
         with open(path, 'r', encoding='utf-8') as include_file:
-            return yaml.safe_load(include_file)
+            return self.load_yaml(include_file, root_loader=loader)
 
     def flatten_config(self, config: dict[Any, Any]) -> list[str]:
         lines: list[str] = []
