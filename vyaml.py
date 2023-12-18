@@ -141,6 +141,20 @@ class VYaml:
     def env_tag_constructor(self, _loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> str:
         return os.environ.get(node.value) or ''
 
+    def include_tag_constructor(self, loader: yaml.SafeLoader, node: yaml.nodes.ScalarNode) -> Any:
+        if node.value.startswith(os.sep):  # absolute path
+            path = node.value
+        else:  # relative path
+            path = os.path.join(os.path.dirname(loader.name), node.value)
+
+        if not os.path.isfile(path):
+            self.error(f'file "{path}" not found\n{str(node.start_mark)}')
+        if not os.access(path, os.R_OK):
+            self.error(f'permission denied when reading file "{path}"\n{node.start_mark}')
+
+        with open(path, 'r', encoding='utf-8') as include_file:
+            return yaml.safe_load(include_file)
+
     def flatten_config(self, config: dict[Any, Any]) -> list[str]:
         lines: list[str] = []
         self.flatten_config_obj(lines, config)

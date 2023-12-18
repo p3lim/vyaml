@@ -44,6 +44,20 @@ Additional [YAML tags](https://github.com/yaml/yaml-spec/blob/main/spec/1.2.2/sp
     ```yaml
     plaintext-password: supersecret
     ```
+- `!include` lets you include other YAML files, useful for segmenting large configuration files
+    ```yaml
+    # can be either absolute path or relative to this file
+    system: !include /path/to/system.yaml
+    services: !include services.yaml
+    ```
+    is equivalent to:
+    ```yaml
+    system:
+      host-name: vyos
+    services:
+      ssh:
+        port: 22
+    ```
 
 ### Secrets
 
