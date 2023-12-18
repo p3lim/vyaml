@@ -141,14 +141,15 @@ class VYaml:
         return lines
 
     def flatten_config_obj(self, lines: list[str], obj: Any = '', prefix: str = '') -> None:
-        if isinstance(obj, dict):
+        if isinstance(obj, dict) and obj:
             for key in obj:
+                # print('obj', obj, key, obj[key], prefix)
                 self.flatten_config_obj(lines, obj[key], prefix + str(key) + ' ')
-        elif isinstance(obj, list):
+        elif isinstance(obj, list) and obj:
             for key in obj:
                 self.flatten_config_obj(lines, key, prefix)
         else:
-            lines.append(f"set {prefix[:-1]} {str(obj)}")
+            lines.append(f"set {prefix[:-1]} {str(obj or '')}")
 
     def encrypt(self, plaintext: str, passphrase: str) -> str:
         salt = get_random_bytes(32)
