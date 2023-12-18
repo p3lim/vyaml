@@ -170,7 +170,7 @@ class VYaml:
                 self.flatten_config_obj(lines, key, prefix)
         elif obj:
             lines.append(f"set {prefix[:-1]} '{str(obj)}'")
-        else
+        else:
             lines.append(f"set {prefix[:-1]}")
 
     def encrypt(self, plaintext: str, passphrase: str) -> str:
