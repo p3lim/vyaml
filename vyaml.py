@@ -145,6 +145,8 @@ class VYaml:
         return config
 
     def load_yaml(self, stream: Any, root_loader: YamlLoader | None = None) -> Any:
+        # copy of yaml.load except inherit the anchors dict from the "root" (first) loader,
+        # and force it to use our custom loader
         loader = YamlLoader(stream)
         if root_loader is not None:
             loader.anchors = root_loader.anchors
