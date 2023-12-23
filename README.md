@@ -186,5 +186,5 @@ chmod u+x /config/scripts/vyaml
 To add it to the path, run the following command:
 ```bash
 echo 'sudo ln -sf /config/scripts/vyaml /usr/local/bin/vyaml' | sudo tee -a /config/scripts/vyos-postconfig-bootup.script
-sh /config/scripts/vyos-postconfig-bootup.script
+vbash /config/scripts/vyos-postconfig-bootup.script
 ```
