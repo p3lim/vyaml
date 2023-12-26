@@ -16,8 +16,8 @@ from Crypto.Protocol.KDF import scrypt
 from Crypto.Random import get_random_bytes
 
 # use vyos library from system path
-sys.path.append('/usr/lib/python3/dist-packages')
-from vyos.config import Config
+# sys.path.append('/usr/lib/python3/dist-packages')
+# from vyos.config import Config
 
 IMAGE_LINE_RE = re.compile(r'^set container name (.*) image (.*)$')
 
@@ -198,7 +198,9 @@ class VYaml:
                 self.flatten_config_obj(lines, key, prefix)
         elif not prefix.startswith('.'):
             if obj:
-                lines.append(f"set {prefix[:-1]} '{str(obj)}'")
+                # replace newlines with literal newlines
+                value = str(obj.strip().replace('\n', '\\n'))
+                lines.append(f"set {prefix[:-1]} '{value}'")
             else:
                 lines.append(f"set {prefix[:-1]}")
 
