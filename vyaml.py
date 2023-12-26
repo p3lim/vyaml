@@ -34,7 +34,7 @@ class YamlLoader(yaml.SafeLoader):
 
 @no_type_check
 def represent_str(dumper, data):
-    if len(data.splitlines()) > 1:
+    if data.count('\n') > 0:
         return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
     return dumper.represent_scalar('tag:yaml.org,2002:str', data)
 
