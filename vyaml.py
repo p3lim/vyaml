@@ -32,6 +32,13 @@ class YamlLoader(yaml.SafeLoader):
         return node
 
 
+@no_type_check
+def represent_str(dumper, data):
+    if len(data.splitlines()) > 1:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+
 class VYaml:
     key: str
 
@@ -119,6 +126,8 @@ class VYaml:
         print(self.execute_vbash(lines))
 
     def import_cmd(self, _args: argparse.Namespace) -> None:
+        yaml.representer.SafeRepresenter.add_representer(str, represent_str)
+
         # grab running config
         vc = Config()
         config = vc.get_config_dict().copy()  # need to copy it to avoid metadata
