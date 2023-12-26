@@ -16,8 +16,8 @@ from Crypto.Protocol.KDF import scrypt
 from Crypto.Random import get_random_bytes
 
 # use vyos library from system path
-# sys.path.append('/usr/lib/python3/dist-packages')
-# from vyos.config import Config
+sys.path.append('/usr/lib/python3/dist-packages')
+from vyos.config import Config
 
 IMAGE_LINE_RE = re.compile(r'^set container name (.*) image (.*)$')
 
