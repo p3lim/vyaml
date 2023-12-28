@@ -32,10 +32,46 @@ jobs:
       - name: Build arm64
         run: pyinstaller -F vyaml.py --hidden-import json --target-architecture arm64 -n vyaml-arm64
 
+      - name: Prepare .deb directories
+        run: |
+          mkdir -p  mkdir -p .debpkg/vyaml-amd64/usr/local/bin
+          mkdir -p  mkdir -p .debpkg/vyaml-arm64/usr/local/bin
+          cp dist/vyaml-amd64 .debpkg/vyaml-amd64/usr/local/bin/vyaml
+          cp dist/vyaml-arm64 .debpkg/vyaml-arm64/usr/local/bin/vyaml
+          chmod +x .debpkg/vyaml-amd64/usr/local/bin/vyaml
+          chmod +x .debpkg/vyaml-arm64/usr/local/bin/vyaml
+
+      - name: Build amd64 deb
+        uses: jiro4989/build-deb-action@v3.0.0
+        id: deb_amd64
+        with:
+          package: vyaml
+          version: ${{ github.ref_name }}
+          arch: amd64
+          maintainer: ${{ github.repository_owner }}
+          package_root: .debpkg/vyaml-amd64
+
+      - name: Build arm64 deb
+        uses: jiro4989/build-deb-action@v3.0.0
+        id: deb_arm64
+        with:
+          package: vyaml
+          version: ${{ github.ref_name }}
+          arch: arm64
+          maintainer: ${{ github.repository_owner }}
+          package_root: .debpkg/vyaml-arm64
+
+      - name: Relocate deb packages
+        run: |
+          mv ${{ steps.deb_amd64.outputs.file_name }} dist/vyaml-amd64.deb
+          mv ${{ steps.deb_arm64.outputs.file_name }} dist/vyaml-arm64.deb
+
       - name: Upload release
         uses: softprops/action-gh-release@v1 # this version is not correct in their docs
         with:
           files: |
             dist/vyaml-amd64
             dist/vyaml-arm64
+            dist/vyaml-amd64.deb
+            dist/vyaml-arm64.deb
           generate_release_notes: true
