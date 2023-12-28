@@ -5,7 +5,7 @@ on:
     branches:
       - master
     tags-ignore:
-      - '**'
+      - "**"
 
 jobs:
   alpha:
@@ -29,8 +29,11 @@ jobs:
       - name: Substitute version
         run: sed -i 's/__version__/${{ steps.sha.outputs.sha_short }}/' vyaml.py
 
-      - name: Build
-        run: pyinstaller -F vyaml.py --hidden-import json
+      - name: Build x86_64
+        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture x86_64 -n vyaml-amd64
+
+      - name: Build arm64
+        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture arm64 -n vyaml-arm64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
