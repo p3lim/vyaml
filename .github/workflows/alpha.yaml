@@ -29,14 +29,57 @@ jobs:
       - name: Substitute version
         run: sed -i 's/__version__/${{ steps.sha.outputs.sha_short }}/' vyaml.py
 
-      - name: Build x86_64
+      - name: Build amd64 binary
         run: pyinstaller -F vyaml.py --hidden-import json --target-architecture x86_64 -n vyaml-amd64
 
-      - name: Build arm64
-        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture arm64 -n vyaml-arm64
-
-      - name: Upload artifact
+      - name: Upload amd64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-${{ steps.sha.outputs.sha_short }}
-          path: dist/*
+          name: vyaml-amd64-${{ steps.sha.outputs.sha_short }}
+          path: dist/vyaml-amd64
+
+      - name: Build arm64 binary
+        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture arm64 -n vyaml-arm64
+
+      - name: Upload arm64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyaml-arm64-${{ steps.sha.outputs.sha_short }}
+          path: dist/vyaml-arm64
+
+      - name: Build x86_64 deb
+        uses: jiro4989/build-deb-action@v3.0.0
+        id: deb_amd64
+        with:
+          package: vyaml
+          version: 0.${{ steps.sha.outputs.sha_short }}
+          arch: amd64
+          maintainer: ${{ github.repository_owner }}
+          package_root: .debpkg/vyaml-arm64
+
+      - name: Build arm64 deb
+        uses: jiro4989/build-deb-action@v3.0.0
+        id: deb_arm64
+        with:
+          package: vyaml
+          version: 0.${{ steps.sha.outputs.sha_short }}
+          arch: arm64
+          maintainer: ${{ github.repository_owner }}
+          package_root: .debpkg/vyaml-arm64
+
+      - name: Relocate deb packages
+        run: |
+          mv ${{ steps.deb_amd64.outputs.file_name }} dist/vyaml-amd64.deb
+          mv ${{ steps.deb_arm64.outputs.file_name }} dist/vyaml-arm64.deb
+
+      - name: Upload amd64 deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyaml-arm64-${{ steps.sha.outputs.sha_short }}.deb
+          path: ${{ steps.deb_amd64.outputs.file_name }}
+
+      - name: Upload arm64 deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vyaml-arm64-${{ steps.sha.outputs.sha_short }}.deb
+          path: ${{ steps.deb_arm64.outputs.file_name }}
