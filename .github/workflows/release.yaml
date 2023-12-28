@@ -3,7 +3,7 @@ name: release
 on:
   push:
     tags:
-      - '**'
+      - "**"
 
 permissions:
   contents: write
@@ -26,11 +26,16 @@ jobs:
       - name: Substitute version
         run: sed -i 's/__version__/${{ github.ref_name }}/' vyaml.py
 
-      - name: Build
-        run: pyinstaller -F vyaml.py --hidden-import json
+      - name: Build x86_64
+        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture x86_64 -n vyaml-amd64
+
+      - name: Build arm64
+        run: pyinstaller -F vyaml.py --hidden-import json --target-architecture arm64 -n vyaml-arm64
 
       - name: Upload release
         uses: softprops/action-gh-release@v1 # this version is not correct in their docs
         with:
-          files: dist/vyaml
+          files: |
+            dist/vyaml-amd64
+            dist/vyaml-arm64
           generate_release_notes: true
