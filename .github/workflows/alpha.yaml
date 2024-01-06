@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need entire history for `git describe`
+          fetch-tags: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -23,11 +26,11 @@ jobs:
         run: pip install -r requirements.txt pyinstaller
 
       - name: Get latest tag suffixed with tag
-        id: sha
+        id: version
         run: echo "commit_version=$(git describe --tags)" >> $GITHUB_OUTPUT
 
       - name: Substitute version
-        run: sed -i 's/__version__/${{ steps.sha.outputs.commit_version }}/' vyaml.py
+        run: sed -i 's/__version__/${{ steps.version.outputs.commit_version }}/' vyaml.py
 
       - name: Build amd64 binary
         run: pyinstaller -F vyaml.py --hidden-import json --target-architecture x86_64 -n vyaml-amd64
@@ -35,7 +38,7 @@ jobs:
       - name: Upload amd64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-amd64-${{ steps.sha.outputs.commit_version }}
+          name: vyaml-amd64-${{ steps.version.outputs.commit_version }}
           path: dist/vyaml-amd64
 
       - name: Build arm64 binary
@@ -44,7 +47,7 @@ jobs:
       - name: Upload arm64 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-arm64-${{ steps.sha.outputs.commit_version }}
+          name: vyaml-arm64-${{ steps.version.outputs.commit_version }}
           path: dist/vyaml-arm64
 
       - name: Prepare .deb directories
@@ -61,7 +64,7 @@ jobs:
         id: deb_amd64
         with:
           package: vyaml
-          version: ${{ steps.sha.outputs.commit_version }}
+          version: ${{ steps.version.outputs.commit_version }}
           arch: amd64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-arm64
@@ -71,7 +74,7 @@ jobs:
         id: deb_arm64
         with:
           package: vyaml
-          version: ${{ steps.sha.outputs.commit_version }}
+          version: ${{ steps.version.outputs.commit_version }}
           arch: arm64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-arm64
@@ -84,11 +87,11 @@ jobs:
       - name: Upload amd64 deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-arm64-${{ steps.sha.outputs.commit_version }}.deb
+          name: vyaml-arm64-${{ steps.version.outputs.commit_version }}.deb
           path: ${{ steps.deb_amd64.outputs.file_name }}
 
       - name: Upload arm64 deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-arm64-${{ steps.sha.outputs.commit_version }}.deb
+          name: vyaml-arm64-${{ steps.version.outputs.commit_version }}.deb
           path: ${{ steps.deb_arm64.outputs.file_name }}
