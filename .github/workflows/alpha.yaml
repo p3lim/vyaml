@@ -82,7 +82,7 @@ jobs:
       - name: Upload amd64 deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vyaml-arm64-${{ steps.version.outputs.commit_version }}.deb
+          name: vyaml-amd64-${{ steps.version.outputs.commit_version }}.deb
           path: ${{ steps.deb_amd64.outputs.file_name }}
 
       - name: Upload arm64 deb artifact
