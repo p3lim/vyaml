@@ -29,6 +29,10 @@ jobs:
         id: version
         run: echo "commit_version=$(git describe --tags)" >> $GITHUB_OUTPUT
 
+      - name: Get repo description
+        id: desc
+        run: echo "desc=$(curl -fsSL ${{ github.api_url }}/repos/${{ github.repository }} | jq -r .description)" >> $GITHUB_OUTPUT
+
       - name: Substitute version
         run: sed -i 's/__version__/${{ steps.version.outputs.commit_version }}/' vyaml.py
 
@@ -68,6 +72,7 @@ jobs:
           arch: amd64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-arm64
+          desc: ${{ steps.desc.outputs.desc }}
 
       - name: Build arm64 deb
         uses: jiro4989/build-deb-action@v3.0.0
@@ -78,6 +83,7 @@ jobs:
           arch: arm64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-arm64
+          desc: ${{ steps.desc.outputs.desc }}
 
       - name: Upload amd64 deb artifact
         uses: actions/upload-artifact@v4

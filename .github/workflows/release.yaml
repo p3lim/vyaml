@@ -23,6 +23,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt pyinstaller
 
+      - name: Get repo description
+        id: desc
+        run: echo "desc=$(curl -fsSL ${{ github.api_url }}/repos/${{ github.repository }} | jq -r .description)" >> $GITHUB_OUTPUT
+
       - name: Substitute version
         run: sed -i 's/__version__/${{ github.ref_name }}/' vyaml.py
 
@@ -50,6 +54,7 @@ jobs:
           arch: amd64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-amd64
+          desc: ${{ steps.desc.outputs.desc }}
 
       - name: Build arm64 deb
         uses: jiro4989/build-deb-action@v3.0.0
@@ -60,6 +65,7 @@ jobs:
           arch: arm64
           maintainer: ${{ github.repository_owner }}
           package_root: .debpkg/vyaml-arm64
+          desc: ${{ steps.desc.outputs.desc }}
 
       - name: Relocate deb packages
         run: |
