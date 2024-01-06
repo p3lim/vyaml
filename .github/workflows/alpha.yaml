@@ -47,6 +47,15 @@ jobs:
           name: vyaml-arm64-${{ steps.sha.outputs.sha_short }}
           path: dist/vyaml-arm64
 
+      - name: Prepare .deb directories
+        run: |
+          mkdir -p  mkdir -p .debpkg/vyaml-amd64/usr/local/bin
+          mkdir -p  mkdir -p .debpkg/vyaml-arm64/usr/local/bin
+          cp dist/vyaml-amd64 .debpkg/vyaml-amd64/usr/local/bin/vyaml
+          cp dist/vyaml-arm64 .debpkg/vyaml-arm64/usr/local/bin/vyaml
+          chmod +x .debpkg/vyaml-amd64/usr/local/bin/vyaml
+          chmod +x .debpkg/vyaml-arm64/usr/local/bin/vyaml
+
       - name: Build x86_64 deb
         uses: jiro4989/build-deb-action@v3.0.0
         id: deb_amd64
