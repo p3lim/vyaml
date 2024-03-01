@@ -88,9 +88,11 @@ jobs:
       - name: Upload amd64 deb artifact
         uses: actions/upload-artifact@v4
         with:
+          name: ${{ steps.deb_amd64.outputs.file_name }}
           path: ${{ steps.deb_amd64.outputs.file_name }}
 
       - name: Upload arm64 deb artifact
         uses: actions/upload-artifact@v4
         with:
+          name: ${{ steps.deb_arm64.outputs.file_name }}
           path: ${{ steps.deb_arm64.outputs.file_name }}
