@@ -69,8 +69,8 @@ jobs:
 
       - name: Relocate deb packages
         run: |
-          mv ${{ steps.deb_amd64.outputs.file_name }} dist/vyaml_${{ github.ref_name }}_amd64.deb
-          mv ${{ steps.deb_arm64.outputs.file_name }} dist/vyaml_${{ github.ref_name }}_arm64.deb
+          mv ${{ steps.deb_amd64.outputs.file_name }} dist/
+          mv ${{ steps.deb_arm64.outputs.file_name }} dist/
 
       - name: Upload release
         uses: softprops/action-gh-release@v1 # this version is not correct in their docs
@@ -78,6 +78,6 @@ jobs:
           files: |
             dist/vyaml-amd64
             dist/vyaml-arm64
-            dist/vyaml-amd64.deb
-            dist/vyaml-arm64.deb
+            dist/${{ steps.deb_amd64.outputs.file_name }}
+            dist/${{ steps.deb_arm64.outputs.file_name }}
           generate_release_notes: true
