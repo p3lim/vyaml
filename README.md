@@ -172,19 +172,14 @@ container name nginx port http destination: 80
 
 ## Installation
 
-Releases are available here on GitHub, packaged into one executable.  
-Most dependencies are included in this file, with the exception of [VyOS Python bindings](https://github.com/vyos/vyos-1x/tree/sagitta/python).
+Releases are available here on GitHub, packaged as a standalone executable and a DEB package, for both amd64 and arm64 architectures.
 
 <https://github.com/p3lim/vyaml/releases>
 
-Add this to `/config/scripts/` (so it survives reboots/upgrades) and make it executable:
-```bash
-curl -sSLo /config/scripts/vyaml https://github.com/p3lim/vyaml/releases/latest/download/vyaml
-chmod u+x /config/scripts/vyaml
-```
+To install the latest version on your VyOS device:
 
-To add it to the path, run the following command:
 ```bash
-echo 'sudo ln -sf /config/scripts/vyaml /usr/local/bin/vyaml' | sudo tee -a /config/scripts/vyos-postconfig-bootup.script
-vbash /config/scripts/vyos-postconfig-bootup.script
+curl -LO --output-dir /tmp "$(curl -sSL "https://api.github.com/repos/p3lim/vyaml/releases/latest" | jq -r --arg arch "$(dpkg-architecture -q DEB_HOST_ARCH)" '.assets[] | select(.name? | match($arch + ".deb")) | .browser_download_url')"
+sudo dpkg --install /tmp/vyaml*.deb
+rm /tmp/vyaml*.deb
 ```
