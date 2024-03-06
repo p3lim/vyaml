@@ -176,10 +176,13 @@ Releases are available here on GitHub, packaged as a standalone executable and a
 
 <https://github.com/p3lim/vyaml/releases>
 
-To install the latest version on your VyOS device:
+To install (or upgrade to) the latest version on your VyOS device:
 
 ```bash
 curl -LO --output-dir /tmp "$(curl -sSL "https://api.github.com/repos/p3lim/vyaml/releases/latest" | jq -r --arg arch "$(dpkg-architecture -q DEB_HOST_ARCH)" '.assets[] | select(.name? | match($arch + ".deb")) | .browser_download_url')"
 sudo dpkg --install /tmp/vyaml*.deb
 rm /tmp/vyaml*.deb
 ```
+
+> [!IMPORTANT]
+> You will need to re-install vyaml this way after every VyOS upgrade, as VyOS is technically ephemeral.
