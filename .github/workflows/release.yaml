@@ -73,7 +73,7 @@ jobs:
           mv ${{ steps.deb_arm64.outputs.file_name }} dist/
 
       - name: Upload release
-        uses: softprops/action-gh-release@v1 # this version is not correct in their docs
+        uses: softprops/action-gh-release@v2 # this version is not correct in their docs
         with:
           files: |
             dist/vyaml-amd64
