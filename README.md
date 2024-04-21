@@ -1,11 +1,10 @@
+> [!CAUTION]
+> April 21st 2024 - Because of the treatment VyOS maintainers/owners have shown the community in the past few weeks/months this project is abandoned, I do not want to support them in any way.
+
 # vyaml
 
 A commandline toolkit for configuring [VyOS](https://vyos.io) devices in [YAML](https://yaml.org).  
 The YAML configuration can be enhanced with [custom tags](#tags), and applied directly.
-
-> [!CAUTION]
-> This project is very much in its infancy and should be used with caution!
-> Take backups of your configuration, preferably test it out on a non-production device first.
 
 ### Commands
 
